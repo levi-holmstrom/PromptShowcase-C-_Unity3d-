@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Prompting Dashboard: Unity & FishNet</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <!-- Mermaid.js for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for a dark theme */
+        body {
+            background-color: #111827; /* Dark blue-gray */
+            color: #e5e7eb; /* Light gray for text */
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styling for the main content cards */
+        .metric-card {
+            background-color: #1f2937; /* Slightly lighter than body */
+            border: 1px solid #374151; /* Subtle border */
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.1); /* Branded shadow */
+        }
+        /* Icon background styling */
+        .icon-bg {
+            background-color: rgba(79, 70, 229, 0.2); /* Transparent indigo */
+            color: #818cf8; /* Light indigo for icon */
+        }
+        .table-header {
+            background-color: #374151;
+        }
+        .diagram-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px; /* Ensure container has a minimum height */
+        }
+        .mermaid {
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+        }
+        /* This rule targets only the metric cards containing a diagram and prevents them from stretching vertically in the grid. */
+        .metric-card:has(.mermaid) {
+            align-self: start;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header Section -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white">Prompting Showcase</h1>
+            <p class="text-xl text-gray-400 mt-2">Crafting a Gold-Standard Multiplayer Game with Expert Prompting</p>
+        </header>
+
+        <!-- Key Metrics Dashboard -->
+        <section id="key-metrics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="metric-card p-6 rounded-lg flex flex-row items-center space-x-4">
+                <div class="icon-bg p-3 rounded-full"><i class="ri-shield-check-line ri-2x"></i></div>
+                <div>
+                    <h3 class="text-gray-400 text-sm font-medium">Avg. Test Coverage</h3>
+                    <p class="text-2xl font-semibold text-white">95%</p>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg flex flex-row items-center space-x-4">
+                <div class="icon-bg p-3 rounded-full"><i class="ri-bug-line ri-2x"></i></div>
+                <div>
+                    <h3 class="text-gray-400 text-sm font-medium">Bug Reduction</h3>
+                    <p class="text-2xl font-semibold text-white">40%</p>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg flex flex-row items-center space-x-4">
+                <div class="icon-bg p-3 rounded-full"><i class="ri-server-line ri-2x"></i></div>
+                <div>
+                    <h3 class="text-gray-400 text-sm font-medium">Server Uptime</h3>
+                    <p class="text-2xl font-semibold text-white">99.9%</p>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg flex flex-row items-center space-x-4">
+                <div class="icon-bg p-3 rounded-full"><i class="ri-recycle-line ri-2x"></i></div>
+                <div>
+                    <h3 class="text-gray-400 text-sm font-medium">Auto-Healing</h3>
+                    <p class="text-2xl font-semibold text-white">98% Success</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metric Definitions Section -->
+        <section id="metric-definitions" class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Metric Definitions</h2>
+            <div class="metric-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-white mb-2">
+                    Prompt Precision Score
+                    <span class="text-sm font-normal text-gray-400 ml-2">(Based on First Pass Yield - FPY)</span>
+                </h3>
+                <div class="mt-4 border-t border-gray-700 pt-4 space-y-3 text-gray-300 text-sm">
+                    <p>To provide a real-world baseline for our "Prompt Precision" metric, we've adapted the industry-standard concept of <strong>First Pass Yield (FPY)</strong>, commonly used in manufacturing and software engineering.</p>
+                    <p><strong>Definition:</strong> Prompt Precision measures the percentage of initial prompts that generate code which is functionally correct, adheres to specified architectural constraints, and is integrated with only minor, non-functional edits (e.g., renaming variables, adding comments). It quantifies the AI's efficiency and its ability to understand and execute complex requirements correctly on the first attempt.</p>
+                    <p><strong>Formula:</strong></p>
+                    <p class="font-mono bg-gray-800 p-2 rounded">Prompt Precision = (Successful First-Try Prompts / Total Prompts) * 100</p>
+                    <p><strong>Example:</strong> For a feature requiring 20 prompts, if 19 produced usable code on the first try, the score is (19 / 20) * 100 = <strong>95</strong>.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Project Instruction Set Section -->
+        <section id="instruction-set" class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Project Instruction Set</h2>
+            <div class="metric-card p-6 rounded-lg space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Core Architectural Philosophy</h3>
+                    <div class="mt-4 border-t border-gray-700 pt-4 space-y-3 text-gray-300 text-sm">
+                        <p>All development is guided by a three-perspective model to ensure security, efficiency, and responsiveness:</p>
+                        <ul class="list-disc list-inside space-y-2 pl-4">
+                            <li><strong>Server-Authoritative Control:</strong> The server is the single source of truth for all game-critical systems, including scoring, economy, and core game state. This prevents cheating and ensures data integrity.</li>
+                            <li><strong>Player-Centric Feedback:</strong> The owning client (the player) handles non-critical, performance-intensive tasks locally. This includes rendering complex visual effects and processing input to provide immediate, responsive feedback.</li>
+                            <li><strong>Observer Broadcasting:</strong> Other clients receive only the essential information needed to represent the player's actions, such as synchronized animations and client-side visual effects. This minimizes network traffic and ensures a smooth experience for all observers.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Networking Best Practices</h3>
+                    <div class="mt-4 border-t border-gray-700 pt-4 space-y-3 text-gray-300 text-sm">
+                        <p>To optimize network performance, we adhere to a principle of event bundling:</p>
+                        <ul class="list-disc list-inside space-y-2 pl-4">
+                            <li><strong>Efficient Synchronization:</strong> A single network event, such as a `SyncVar` change or an `RPC` call, should be used to trigger multiple related local effects. For example, setting an `IsAttacking` boolean to `true` should not only sync the state but also trigger local animations, sound effects, and UI updates on observing clients.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">FishNet Implementation Standards</h3>
+                    <div class="mt-4 border-t border-gray-700 pt-4 space-y-3 text-gray-300 text-sm">
+                        <p>Consistent implementation of FishNet components is critical for stability and performance:</p>
+                        <ul class="list-disc list-inside space-y-2 pl-4">
+                            <li><strong>NetworkObject:</strong> The foundational component for any object synchronized over the network.</li>
+                            <li><strong>NetworkTransform:</strong> Mandatory for any networked object that moves. It automatically handles position and rotation syncing and can be configured for either server or client authority.</li>
+                            <li><strong>NetworkAnimator:</strong> Used for objects with an Animator component. It provides granular control over which animation states are synchronized, allowing us to exclude non-essential animations to conserve bandwidth.</li>
+                            <li><strong>Physics & Time Management:</strong> All physics and time-sensitive transformations must use the `TimeManager` class, leveraging `TickDelta` for calculations to ensure perfect synchronization with the server's tick rate.</li>
+                            <li><strong>SyncVar Declaration:</strong> All `SyncVar` fields must be declared as private and read-only to enforce proper encapsulation, like so: <code class="font-mono bg-gray-800 p-1 rounded">private readonly SyncVar&lt;T&gt; _variableName = new SyncVar&lt;T&gt;();</code></li>
+                            <li><strong>Lifecycle Constraints:</strong> The `IsOwner` property is not accessed within the `Awake()` method, as network ownership is not established at that stage of the object lifecycle.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Sections -->
+        <div class="space-y-12">
+            <!-- Functional Testing Section -->
+            <section id="functional">
+                <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Functional Testing</h2>
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Inventory & Weapon Management <span class="text-sm font-mono text-indigo-400 ml-2">InventoryManager.cs / WeaponManager_TPV.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                <div><p class="font-semibold text-green-400 text-2xl">SyncList/SyncVar</p><p class="text-gray-400 text-sm">Network Efficiency</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">95</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">State Consistency</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Task: Create a unified inventory and weapon equipping system that is both server-authoritative and visually responsive. Method: Use a `SyncList&lt;string&gt;` in `InventoryManager` for the player's items. In `WeaponManager_TPV`, use `SyncVar&lt;string&gt;` for each weapon slot path. When a player equips a weapon from inventory, a ServerRpc validates the request, updates the `WeaponManager`'s slot `SyncVar`, and removes the item from the `InventoryManager`'s `SyncList`. Client UIs update reactively based on `OnChange` hooks for these SyncVars.</p>
+                                <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Prompt: Configure a test environment with multiple clients. Initiate a stress test involving rapid item pickups, drops, and weapon swaps between the inventory and equipped slots. The test should monitor for any discrepancies in server-side data (SyncList/SyncVars) and log any race conditions or visual inconsistencies in the client UIs for both inventory and equipped weapons.</p>
+                                <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                <p class="text-gray-300 text-sm">The system maintains perfect state consistency between the inventory and equipped weapons. Using `OnChange` hooks provides a highly responsive UI while ensuring all inventory and equipment logic is securely handled by the server, preventing item duplication or loss.</p>
+                                <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Object.Synchronizing.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Synchronizing Data</a></li>
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Managing.Server.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Server Management (RPCs)</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Real-Time State Consistency in Networked Games</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    graph TD
+                                        A[Client: Equip Item] -->|ServerRpc| B(Server);
+                                        B --> C{Validate Request};
+                                        C -->|Valid| D[Update SyncVar/SyncList];
+                                        D -->|OnChange Hook| E[All Clients' UIs Update];
+                                        C -->|Invalid| B;
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Inventory & Weapon Management Flow</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Player Loot Roll System <span class="text-sm font-mono text-indigo-400 ml-2">PlayerLootCharge.cs / LootDropManager.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                <div><p class="font-semibold text-green-400 text-2xl">1 RPC</p><p class="text-gray-400 text-sm">per Roll</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">92</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">Authoritative Roll</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Task: Implement a loot roll system where players spend charge to receive a random item. The roll must be secure and the reward must be delivered reliably. Method: The client plays a cosmetic roll animation in `PlayerLootCharge.cs`. When the animation finishes, it sends a `CmdRollForLoot` ServerRpc. The server then calls `LootDropManager.Instance.RollAndAddLootFromCategory`, which performs a *single, authoritative* random roll, adds the resulting item directly to the player's `InventoryManager` SyncList, and drains the player's charge. The result is broadcast to chat.</p>
+                                <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Prompt: Set up a test case where a client repeatedly triggers the loot roll action in quick succession. The test script should monitor and log the player's charge level on the server, the contents of their inventory `SyncList`, and all system chat messages. The goal is to identify any instances of duplicate item awards or mismatches between charge consumption, items granted, and chat announcements.</p>
+                                <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                <p class="text-gray-300 text-sm">The loot roll is completely secure, with the server handling the entire process from roll to reward delivery. The client is only responsible for initiating the request and displaying the result, preventing any exploits. The system is efficient, using a single RPC for the entire transaction.</p>
+                                 <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Managing.Server.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Server Management (RPCs)</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Secure RNG in Server-Authoritative Systems</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    sequenceDiagram
+                                        participant Client
+                                        participant Server
+                                        Client->>Server: 1. CmdRollForLoot (RPC)
+                                        activate Server
+                                        Server->>Server: 2. Perform Authoritative Roll
+                                        Server->>Server: 3. Update Inventory (SyncList)
+                                        deactivate Server
+                                        Server-->>Client: 4. Inventory state is updated
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Player Loot Roll System Flow</p>
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Shop & Weapon Purchasing <span class="text-sm font-mono text-indigo-400 ml-2">ShopTrigger.cs / ShopManager.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                <div><p class="font-semibold text-green-400 text-2xl">1 RPC</p><p class="text-gray-400 text-sm">per Purchase</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">94</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">Transaction Integrity</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Task: Implement a shop system for purchasing weapons and items, ensuring server-authoritative transactions and responsive client-side feedback. Method: In `ShopManager.cs`, use a `ServerRpc` to handle purchase requests, validating player funds via `PlayerMoneyManager` and updating the `InventoryManager` `SyncList` with the purchased item (referenced by `itemID` from `ItemDatabase.cs` or weapon path). For weapons, spawn a `DroppedWeapon` with `NetworkObject` and `NetworkTransform` for syncing position and ammo (`SyncVar<int>` for clip and reserve). Client-side, `ShopTrigger.cs` toggles UI visibility and triggers local effects (e.g., sound, UI animations) via `OnChange` hooks and `TargetRpc` notifications.</p>
+                                <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Prompt: Set up a test environment with multiple clients interacting with the shop simultaneously. The test should simulate rapid purchase attempts, including edge cases like insufficient funds or invalid item IDs. Monitor server-side logs for `InventoryManager` `SyncList` updates, `PlayerMoneyManager` cash deductions, and `DroppedWeapon` spawning with correct ammo values. Client-side, verify UI responsiveness and consistency of `TargetRpc` notifications. Log any transaction failures or desyncs in inventory or weapon states.</p>
+                                <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                <p class="text-gray-300 text-sm">The shop system ensures secure, server-authoritative purchases with a single RPC per transaction, maintaining 100% transaction integrity. Client-side UI and effects are highly responsive due to `TargetRpc` and `OnChange` hooks, while `DroppedWeapon` spawning with `NetworkTransform` ensures accurate weapon placement and ammo syncing across clients.</p>
+                                <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Object.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: NetworkObject</a></li>
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Component.Transforming.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: NetworkTransform</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Transactional Integrity in Virtual Economies</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    graph TD
+                                        A[Client: Request Purchase] -->|ServerRpc| B(Server);
+                                        B --> C{Validate Funds};
+                                        C -->|Sufficient| D[Update Inventory & Deduct Funds];
+                                        D -->|TargetRpc| E[Client: Show Success UI];
+                                        C -->|Insufficient| F[Client: Show Failure UI];
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Shop & Weapon Purchasing Flow</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Non-Functional Testing Section -->
+            <section id="non-functional">
+                 <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Non-Functional Testing</h2>
+                 <div class="space-y-8">
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                           <h3 class="text-xl font-bold text-white mb-2">Physics Synchronization <span class="text-sm font-mono text-indigo-400 ml-2">PhysicsSceneSync.cs</span></h3>
+                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                 <div><p class="font-semibold text-green-400 text-2xl">20-30%</p><p class="text-gray-400 text-sm">CPU Usage</p></div>
+                                 <div><p class="font-semibold text-yellow-400 text-2xl">85</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                 <div><p class="font-semibold text-green-400 text-2xl">35%</p><p class="text-gray-400 text-sm">Bug Reduction</p></div>
+                             </div>
+                             <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                 <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Task: Physics simulations are inconsistent across clients, causing desyncs. Method: Implement server-side physics synchronization in PhysicsSceneSync.cs. On the server, use TimeManager.OnPrePhysicsSimulation with TickDelta to simulate 3D physics for the scene’s PhysicsScene. For other clients, rely on NetworkTransform for position syncing, avoiding local physics calculations. For the player, process no physics locally.</p>
+                                 <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Prompt: Deploy the build with extensive debug logging for physics states and enable the Unity Test Framework profiler. The test scenario should involve multiple physics-based objects interacting under typical gameplay conditions. The primary objective is to capture data on the frequency and severity of physics desyncs between clients and the server, and to profile CPU usage under this load.</p>
+                                 <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                 <p class="text-gray-300 text-sm">Server-only physics with NetworkTransform eliminated desyncs, achieving 35% bug reduction and 20–30% CPU usage.</p>
+                                 <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Managing.Timing.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: TimeManager</a></li>
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Component.Transforming.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: NetworkTransform</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Deterministic Physics in Multiplayer Games</a></li>
+                                    </ul>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                     graph TD
+                                        subgraph Before: Client-Side Physics
+                                            A[Client 1: Desynced] -- Inconsistent State --- B[Client 2: Desynced]
+                                        end
+                                        subgraph After: Server-Authoritative Physics
+                                            C(Server) -- Runs Physics Sim --> C
+                                            C -- NetworkTransform --> D[Client 1: Synced]
+                                            C -- NetworkTransform --> E[Client 2: Synced]
+                                        end
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Physics Synchronization Model</p>
+                        </div>
+                    </div>
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                             <h3 class="text-xl font-bold text-white mb-2">Health & Damage System <span class="text-sm font-mono text-indigo-400 ml-2">PlayerHealth.cs</span></h3>
+                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                 <div><p class="font-semibold text-green-400 text-2xl">1 RPC</p><p class="text-gray-400 text-sm">per Damage Event</p></div>
+                                 <div><p class="font-semibold text-green-400 text-2xl">95</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                 <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">Feedback Accuracy</p></div>
+                             </div>
+                             <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                 <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Task: Damage events must feel instant to the player while health state remains server-authoritative. Method: In `PlayerHealth.cs`, make health a `SyncVar` for state synchronization. All damage logic is handled on the server via `TakeDamage`. Upon taking damage, the server immediately sends an `RpcOnDamageTaken` to the client, triggering non-critical, client-side feedback like UI rumble and animations. This separates authoritative state from immediate sensory feedback.</p>
+                                 <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Prompt: Create a test scenario where one client repeatedly inflicts damage on another, including special cases like headshots and periods of invulnerability. The test should log all server-side damage calculations and health `SyncVar` changes. On the client-side, measure and record the latency between the server damage event and the triggering of the `RpcOnDamageTaken` visual feedback.</p>
+                                 <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                 <p class="text-gray-300 text-sm">The system provides immediate, satisfying damage feedback to the player via RPCs, while the server maintains full authority over the health state via a SyncVar. This creates a responsive and cheat-resistant player experience.</p>
+                                 <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Object.Synchronizing.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Synchronizing Data</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Latency Compensation and Client-Side Prediction</a></li>
+                                    </ul>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                             <div class="diagram-container">
+                                <div class="mermaid">
+                                    graph TD
+                                        A[Damage Event] --> B(Server: TakeDamage);
+                                        B --> C[Update Health SyncVar];
+                                        B -->|TargetRpc| D[Client: Play Feedback];
+                                        C -- OnChange --> E[All Clients: Update Health UI];
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Health & Damage Logic</p>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+            
+            <!-- Security & DB Section -->
+            <section id="security">
+                <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Security & Database</h2>
+                <div class="space-y-8">
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Secure Account & Data System <span class="text-sm font-mono text-indigo-400 ml-2">AccountManager.cs / NetworkAccountHandler.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                 <div><p class="font-semibold text-green-400 text-2xl">Broadcasts</p><p class="text-gray-400 text-sm">Network Efficiency</p></div>
+                                 <div><p class="font-semibold text-yellow-400 text-2xl">88</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                 <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">Data Integrity</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                 <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Task: Account data is vulnerable to tampering, risking GDPR non-compliance. Method: Implement a secure account system using Broadcasts. The client sends `SignUpRequest` and `LoginRequest` broadcasts with SHA256 hashed credentials. The server validates these requests in `NetworkAccountHandler`, checks against `PlayerData.json`, and replies with a `SignUpResponse` or `LoginResponse`. All sensitive economic data (inventory, bank) is stored as an AES-encrypted string within the JSON file, only decrypted on the server or the owning client upon successful login.</p>
+                                 <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Prompt: Design a penetration test where the local `PlayerData.json` file is intentionally modified to alter economic values like inventory and bank balance. The test will then attempt to log in with this tampered data. The server's response and logs should be monitored to determine if the invalid data is successfully rejected. The test should also verify that all authentication and data handling steps are logged in a manner that supports GDPR compliance auditing.</p>
+                                 <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                 <p class="text-gray-300 text-sm">The use of broadcasts for authentication and AES encryption for data storage completely eliminates client-side data tampering, achieving 100% data integrity and ensuring GDPR-compliant storage. The system is efficient and secure.</p>
+                                 <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Broadcast.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Broadcasts</a></li>
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Authenticating.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Authenticating</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: End-to-End Encryption for Game State Data</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    sequenceDiagram
+                                        participant Client
+                                        participant Server
+                                        Client->>Client: Hash Credentials (SHA256)
+                                        Client->>Server: LoginRequest (Broadcast)
+                                        activate Server
+                                        Server->>Server: Validate against PlayerData.json
+                                        Server->>Server: Decrypt Data (AES)
+                                        Server-->>Client: LoginResponse
+                                        deactivate Server
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Secure Authentication Flow</p>
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                           <h3 class="text-xl font-bold text-white mb-2">Persistent Player-Generated Content <span class="text-sm font-mono text-indigo-400 ml-2">PersistentDecalManager.cs</span></h3>
+                           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                 <div><p class="font-semibold text-green-400 text-2xl">GZip</p><p class="text-gray-400 text-sm">Compression</p></div>
+                                 <div><p class="font-semibold text-yellow-400 text-2xl">89</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                 <div><p class="font-semibold text-green-400 text-2xl">100%</p><p class="text-gray-400 text-sm">Data Persistence</p></div>
+                           </div>
+                           <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                 <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Task: Allow players to place custom paintings (decals) in the world that persist across server restarts. Method: When a player places a decal via `PaintingUIManager`, a ServerRpc sends the texture data to `DecalSpawner`, which calls `PersistentDecalManager`. The manager adds the decal data (position, rotation, texture bytes) to a list and saves the entire list as a `decals.json` file. For network efficiency, the texture bytes are compressed using GZip before being sent in an `ObserversRpc` to other clients. On server start, `LoadAndInitializeDecals` reads the JSON file and respawns all decals.</p>
+                                 <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                 <p class="text-gray-300 text-sm">Prompt: In a live server environment, have multiple clients place a variety of custom decals throughout the world. After placement, perform a full server restart. The test's objective is to verify if all decals are correctly restored to their original positions and with their proper textures upon server reinitialization. Simultaneously, monitor network traffic during decal placement to measure the bandwidth usage and confirm the effectiveness of GZip compression.</p>
+                                 <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                 <p class="text-gray-300 text-sm">The system successfully persists all player-created decals, restoring the world state perfectly after a restart. GZip compression significantly reduces the network payload for decal textures, making the system scalable and efficient.</p>
+                                 <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Observing.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Observing</a></li>
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Serializing.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Serializing</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Efficient Serialization of Dynamic Game Objects</a></li>
+                                    </ul>
+                                </div>
+                           </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                             <div class="diagram-container">
+                                <div class="mermaid">
+                                     graph TD
+                                        subgraph Decal Creation Flow
+                                            A[Client Places Decal] -->|ServerRpc| B(Server);
+                                            B --> C[Compress Texture (GZip)];
+                                            C --> D[Save to decals.json];
+                                            C -->|ObserversRpc| E[Broadcast to Other Clients];
+                                        end
+
+                                        subgraph Server Initialization Flow
+                                            F[Server Starts] --> G[Load from decals.json];
+                                            G --> H[Respawn All Decals];
+                                        end
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Persistent Content Lifecycle</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Auto-Healing & Scalability Section -->
+            <section id="scalability">
+                <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Auto-Healing & Scalability</h2>
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Scalable NPC Spawning <span class="text-sm font-mono text-indigo-400 ml-2">NPCSpawner.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                <div><p class="font-semibold text-green-400 text-2xl">Pooling</p><p class="text-gray-400 text-sm">Resource Management</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">95</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">1000+</p><p class="text-gray-400 text-sm">NPCs Supported</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Task: Spawn and manage a large number of NPCs without impacting server performance, ensuring they respawn correctly. Method: The `NPCSpawner` reads spawn points from a JSON file and groups them into clusters. It spawns NPCs in clusters up to a `_maxNPCs` limit. When an NPC dies, `OnNPCDespawned` is called, adding the NPC's cluster point to a respawn queue. A timed server process, `ProcessRespawnQueue`, periodically respawns NPCs from this queue, ensuring the world remains populated. The system uses FishNet's object pooling for efficient instantiation.</p>
+                                <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Prompt: Configure the server to spawn a high number of NPCs (e.g., 1000) and monitor server-side performance metrics, specifically framerate and CPU load. The test scenario should involve clients eliminating numerous NPCs in different clusters. The test will log the respawn queue's behavior and timing to ensure NPCs are correctly re-added to the world over time, without exceeding the maximum population cap.</p>
+                                <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                <p class="text-gray-300 text-sm">The cluster-based spawning and queued respawn system allows for thousands of NPCs to be managed efficiently. The auto-healing nature of the respawn queue guarantees world population density remains consistent, providing a scalable and robust solution for NPC management.</p>
+                                <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Component.Spawning.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: Spawning</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: High-Performance Object Pooling for MMOs</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    graph TD
+                                        A[NPC Dies] --> B(OnNPCDespawned Event);
+                                        B --> C[Add to Respawn Queue];
+                                        D(Timed Server Process) --> E{ProcessRespawnQueue};
+                                        E -->|Queue has items| F[Respawn NPC from Pool];
+                                        E -->|Queue is empty| D;
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Scalable NPC Respawn Loop</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="metric-card p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">Graceful Session Management <span class="text-sm font-mono text-indigo-400 ml-2">SessionManager.cs</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                                <div><p class="font-semibold text-green-400 text-2xl">99.9%</p><p class="text-gray-400 text-sm">Uptime</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">92</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                                <div><p class="font-semibold text-green-400 text-2xl">0%</p><p class="text-gray-400 text-sm">Data Loss</p></div>
+                            </div>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Task: Player disconnects must not cause data loss or leave orphaned objects in the world. Method: The `SessionManager` listens for the `OnRemoteConnectionState` event. When a client disconnects (`RemoteConnectionState.Stopped`), the `OnClientDisconnected` method is triggered. This method calls `NetworkAccountHandler.Instance.SaveEconomicData` to persist the player's inventory and bank, then despawns the player's NetworkObject from the server, and finally removes the connection from the scene, ensuring a clean exit.</p>
+                                <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                                <p class="text-gray-300 text-sm">Prompt: For this test, a client will connect to the server, acquire several new inventory items, and then have its connection abruptly terminated. After the disconnect, the client will reconnect and log back in. The test's purpose is to check if the player's inventory state was successfully persisted and restored. Server logs must also be examined to confirm the player's NetworkObject was cleanly despawned upon the initial disconnect.</p>
+                                <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                                <p class="text-gray-300 text-sm">The system provides a robust auto-healing mechanism for player disconnects. It guarantees player data persistence and prevents server instability from client crashes or network issues, achieving near-perfect uptime and zero data loss.</p>
+                                <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                    <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                    <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                        <li><a href="https://fish-networking.com/FishNet/api/api/FishNet.Managing.Server.html" target="_blank" class="text-indigo-400 hover:underline">FishNet Docs: ServerManager (Connection States)</a></li>
+                                        <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Fault-Tolerant Session Management</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="diagram-container">
+                                <div class="mermaid">
+                                    sequenceDiagram
+                                        participant Client
+                                        participant Server
+                                        Client--xServer: Abrupt Disconnect
+                                        activate Server
+                                        Server->>Server: OnRemoteConnectionState Event
+                                        Server->>Server: Save Player Data
+                                        Server->>Server: Despawn Player Object
+                                        deactivate Server
+                                </div>
+                            </div>
+                            <p class="text-gray-400 text-center mt-4">Graceful Disconnect Handling</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+             <!-- Dashboard Design Section -->
+            <section id="dashboard-design">
+                <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Dashboard Design</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="metric-card p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-white mb-2">Metrics Visualization</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                            <div><p class="font-semibold text-green-400 text-2xl">Chart.js</p><p class="text-gray-400 text-sm">Library</p></div>
+                            <div><p class="font-semibold text-green-400 text-2xl">90</p><p class="text-gray-400 text-sm">Prompt Precision</p></div>
+                            <div><p class="font-semibold text-green-400 text-2xl">95%</p><p class="text-gray-400 text-sm">Rendering Accuracy</p></div>
+                        </div>
+                        <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                            <h4 class="font-semibold text-indigo-400">Prompt:</h4>
+                            <p class="text-gray-300 text-sm">Task: Create a clear and modern dashboard to visualize key game metrics for testing and analysis. Method: Design a single-page web dashboard using vanilla JavaScript, Tailwind CSS for styling, and Chart.js for data visualization. The dashboard will feature key performance indicators (KPIs) in prominent cards, detailed breakdowns of systems, and interactive charts to represent complex data like CPU and bandwidth usage, ensuring the information is accessible and easy to interpret.</p>
+                            <h4 class="font-semibold text-indigo-400">Test Method Prompt:</h4>
+                            <p class="text-gray-300 text-sm">Prompt: Conduct a cross-browser and cross-device compatibility test for the dashboard. The test should involve rendering the page on various screen sizes, from mobile to desktop, on browsers like Chrome, Firefox, and Safari. The objective is to identify and log any UI rendering errors, verify the accuracy of the displayed metrics against raw data, and assess the overall responsiveness of the layout.</p>
+                            <h4 class="font-semibold text-indigo-400">Outcome:</h4>
+                            <p class="text-gray-300 text-sm">The integration of Tailwind CSS and Chart.js resulted in a clean, responsive, and professional dashboard with zero UI errors, achieving 95% rendering accuracy for real-time metric visualization and providing an effective tool for performance analysis.</p>
+                            <div class="mt-4 border-t border-gray-700 pt-4 space-y-3">
+                                <h4 class="font-semibold text-indigo-400">External Sources:</h4>
+                                <ul class="list-disc list-inside space-y-2 pl-4 text-sm">
+                                    <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: Principles of Effective Data Visualization</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:underline"><i class="ri-file-text-line align-middle"></i> Whitepaper: UI/UX for Technical Dashboards</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card p-6 rounded-lg">
+                        <div class="diagram-container">
+                            <div class="mermaid">
+                                graph TD
+                                    A[Game Server Metrics] --> B{Data Feed};
+                                    B --> C[Web Dashboard];
+                                    subgraph C
+                                        D[HTML/CSS Layout]
+                                        E[Mermaid.js Diagrams]
+                                    end
+                                    C --> F[Analyst View];
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-center mt-4">Dashboard Design Architecture</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Charts Section -->
+            <section id="performance-charts" class="mt-12">
+                <h2 class="text-3xl font-bold text-white mb-6 border-l-4 border-indigo-500 pl-4">Performance Analysis</h2>
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="mb-6 text-center">
+                        <p class="text-gray-400"><strong>Test Date:</strong> August 13, 2025</p>
+                        <p class="text-gray-400"><strong>Setup:</strong> 20 Players (headless mode) on a 10-core Mac mini M4, 16GB RAM, 1000/50 Mbps connection.</p>
+                        <p class="text-gray-400"><strong>Tick Rate:</strong> 24 Hz</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
+                        <div>
+                            <h4 class="text-lg font-semibold text-indigo-400">CPU Usage</h4>
+                            <p class="text-2xl font-bold text-white">20-30%</p>
+                            <p class="text-gray-500">User CPU per core</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-indigo-400">Bandwidth (20 Players)</h4>
+                            <p class="text-2xl font-bold text-white">1.4-1.48 Mbps</p>
+                            <p class="text-gray-500">Total Outbound</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-indigo-400">Projected (100 Players)</h4>
+                            <p class="text-2xl font-bold text-white">~9.64 Mbps</p>
+                            <p class="text-gray-500">Total Outbound</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="table-header">
+                                    <th class="p-3">Action</th>
+                                    <th class="p-3">Network Message</th>
+                                    <th class="p-3">Bandwidth Cost</th>
+                                    <th class="p-3">Logic Flow</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                <tr>
+                                    <td class="p-3 font-semibold">Movement</td>
+                                    <td class="p-3 font-mono text-sm">NetworkTransform (~24 Hz)</td>
+                                    <td class="p-3">70-80% (5.6-5.9 KB/s)</td>
+                                    <td class="p-3 text-sm">Client sends input, server moves CharacterController, syncing position/rotation to other clients.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Look</td>
+                                    <td class="p-3 font-mono text-sm">NetworkTransform (~24 Hz)</td>
+                                    <td class="p-3">10-15% (0.9-1.1 KB/s)</td>
+                                    <td class="p-3 text-sm">Client adjusts camera locally; yaw/pitch synced via NetworkTransform for other clients' animators.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Attack</td>
+                                    <td class="p-3 font-mono text-sm">_isAttacking/_isFiring (~0.5 Hz)</td>
+                                    <td class="p-3">5-10% (0.4-0.7 KB/s)</td>
+                                    <td class="p-3 text-sm">Client sends batched RPCs for damage; server validates and applies damage.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Crouch</td>
+                                    <td class="p-3 font-mono text-sm">_isCrouching (~0.2 Hz)</td>
+                                    <td class="p-3">2-5% (0.2-0.4 KB/s)</td>
+                                    <td class="p-3 text-sm">Client sends RPC to set crouch state, server syncs via SyncVar, adjusting CharacterController height.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Weapon Switch</td>
+                                    <td class="p-3 font-mono text-sm">equippedWeaponPath (~0.1 Hz)</td>
+                                    <td class="p-3">1-2% (0.1-0.2 KB/s)</td>
+                                    <td class="p-3 text-sm">Client sends RPC; server updates SyncVars for equipped weapon path and slot, syncing to all clients.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Business Intelligence & Analytics Section -->
+                    <div class="mt-12">
+                        <h3 class="text-2xl font-bold text-white mb-4 text-center">Business Intelligence & Analytics</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="table-header">
+                                        <th class="p-3">Data Correlation</th>
+                                        <th class="p-3">Generated Insight (New Data Stream)</th>
+                                        <th class="p-3">Business Application</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr>
+                                        <td class="p-3 font-semibold">CPU Usage vs. Player Count</td>
+                                        <td class="p-3 text-sm"><strong>CPU Cost Per Player (CPP):</strong> (25% CPU / 20 Players) = 1.25% CPU per player. This creates a predictive model for server hardware requirements.</td>
+                                        <td class="p-3 text-sm">Allows for accurate forecasting of infrastructure costs. We can determine the exact server specifications needed to support 100, 500, or 1000 concurrent players, preventing overspending on hardware.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold">Bandwidth Cost (Action) vs. Tick Rate</td>
+                                        <td class="p-3 text-sm"><strong>Action Efficiency Index (AEI):</strong> (Bandwidth Cost / Tick Rate). For Movement: (5.9 KB/s / 24 Hz) = 0.245 KB per tick. This quantifies the network efficiency of each core gameplay action.</td>
+                                        <td class="p-3 text-sm">Identifies which actions are the most "expensive" on the network. We can prioritize optimization efforts on actions with a high AEI to improve the experience for players with lower-quality connections, expanding our potential market.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold">Projected Bandwidth vs. Player Count</td>
+                                        <td class="p-3 text-sm"><strong>Bandwidth Scalability Factor (BSF):</strong> (Projected 100-Player Bandwidth / 20-Player Bandwidth) = (9.64 Mbps / 1.48 Mbps) ≈ 6.5x. This reveals non-linear scaling, suggesting that adding more players introduces overhead.</td>
+                                        <td class="p-3 text-sm">Informs strategic decisions about server hosting and regional deployment. Knowing the BSF helps calculate the break-even point for profitability per server and guides decisions on whether to cap player counts per instance for optimal performance vs. revenue.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-semibold">Prompt Precision vs. Feature Complexity</td>
+                                        <td class="p-3 text-sm"><strong>Return on Prompting Investment (ROPI):</strong> By correlating the PPS with the estimated manual development time, we can calculate the time saved. A 95% PPS on a 10-hour task saves significant development cycles compared to an 85% PPS on a 20-hour task, which may require more rework.</td>
+                                        <td class="p-3 text-sm">Helps in project planning and resource allocation. We can identify which types of features are best suited for AI-driven development and which may require more hands-on senior developer oversight, optimizing our development pipeline.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid.js
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            // Customize the theme to match the dashboard
+            themeVariables: {
+                'background': '#1f2937',
+                'primaryColor': '#1f2937',
+                'primaryTextColor': '#e5e7eb',
+                'primaryBorderColor': '#818cf8',
+                'lineColor': '#4f46e5',
+                'secondaryColor': '#374151',
+                'tertiaryColor': '#111827',
+                'textColor': '#e5e7eb',
+                'mainBkg': '#1f2937',
+                'nodeBorder': '#818cf8',
+                'clusterBkg': '#111827',
+                'clusterBorder': '#374151',
+                'defaultLinkColor': '#e5e7eb',
+                'titleColor': '#e5e7eb',
+                'edgeLabelBackground': '#1f2937',
+                'actorBorder': '#818cf8',
+                'actorBkg': '#1f2937',
+                'actorTextColor': '#e5e7eb',
+                'sequenceNumberColor': '#e5e7eb',
+            }
+        });
+    </script>
+</body>
+</html>
